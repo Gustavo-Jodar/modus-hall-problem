@@ -20,6 +20,13 @@ int heathens_counter = 0;
 int prudes_counter = 0;
 int prudes_turn = 0;
 int heathens_turn = 0;
+
+int prudes_done = 0;
+int heathens_done = 0;
+
+int NUM_PRUDES = 2;
+int NUM_HEATHENS = 2;
+
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void prudes(void)
@@ -52,9 +59,13 @@ void prudes(void)
     {
         prudes_turn++;
     }
+    prudes_done++;
     printf("\n%sPRUDES FINISHED%s\nPrudes: %d\nHeathens: %d",
            "\033[31;1m", "\033[00m",
            prudes_counter, heathens_counter);
+    printf("\nRemaining:\n");
+    printf("Heathens: %d\n", NUM_HEATHENS - heathens_done);
+    printf("Prudes: %d\n", NUM_PRUDES - prudes_done);
 
     pthread_mutex_unlock(&mutex);
 }
@@ -90,9 +101,13 @@ void heathens(void)
     {
         heathens_turn++;
     }
+    heathens_done++;
     printf("\n%sHEATHENS FINISHED%s\nPrudes: %d\nHeathens: %d",
            "\033[31;1m", "\033[00m",
            prudes_counter, heathens_counter);
+    printf("\nremaining:\n");
+    printf("Heathens: %d\n", NUM_HEATHENS - heathens_done);
+    printf("Prudes: %d\n", NUM_PRUDES - prudes_done);
     pthread_mutex_unlock(&mutex);
 }
 
@@ -102,8 +117,12 @@ void run()
     int num_heathens, num_prudes, start;
     pthread_t *tid_prudes, *tid_heathens;
 
-    num_heathens = 2;
-    num_prudes = 2;
+    num_heathens = NUM_HEATHENS;
+    num_prudes = NUM_PRUDES;
+
+    printf("-- Initially --\n");
+    printf("Prudes: %d\n", num_prudes);
+    printf("Heathens: %d\n", num_heathens);
 
     if (num_heathens > num_prudes)
         start = 1;
